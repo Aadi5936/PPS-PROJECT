@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <string.h>
+
+#define NUM_SEATS 10
+#define TICKET_COST 50
+
+// Structure to represent a seat
+typedef struct {
+    int seat_number;
+    int is_reserved;
+    char passenger_name[50];
+    char destination[50];
+    int num_tickets;
+    char date_of_travel[20];
+    float per_ticket_cost;
+    float total_ticket_cost;
+} Seat;
+
+// Function to initialize seats
+void initializeSeats(Seat seats[], int num_seats) {
+    for (int i = 0; i < num_seats; i++) {
+        seats[i].seat_number = i + 1;
+        seats[i].is_reserved = 0;
+        seats[i].passenger_name[0] = '\0';
+        seats[i].destination[0] = '\0';
+        seats[i].num_tickets = 0;
+        seats[i].date_of_travel[0] = '\0';
+        seats[i].per_ticket_cost = TICKET_COST;
+        seats[i].total_ticket_cost = 0;
+    }
+}
+
+// Function to display the available seats
+void displaySeats(Seat seats[], int num_seats) {
+    printf("Available Seats:\n");
+    for (int i = 0; i < num_seats; i++) {
+        if (!seats[i].is_reserved) {
+            printf("Seat %d: Available\n", seats[i].seat_number);
+        }
+    }
+}
+
+// Function to reserve a seat
+void reserveSeat(Seat seats[], int num_seats) {
+    int seat_number;
+    printf("Enter the seat number you want to reserve: ");
+    scanf("%d", &seat_number);
+
+    if (seat_number < 1 || seat_number > num_seats) {
+        printf("Invalid seat number. Please enter a valid seat number.\n");
+        return;
+    }
+
+    if (seats[seat_number - 1].is_reserved) {
+        printf("Seat %d is already reserved.\n", seat_number);
+    } else {
+        seats[seat_number - 1].is_reserved = 1;
+        printf("Enter passenger name: ");
+        scanf("%s", seats[seat_number - 1].passenger_name);
+        printf("Enter destination: ");
+        scanf("%s", seats[seat_number - 1].destination);
+        printf("Enter number of tickets: ");
+        scanf("%d", &seats[seat_number - 1].num_tickets);
+        printf("Enter date of travel (DD/MM/YYYY): ");
+        scanf("%s", seats[seat_number - 1].date_of_travel);
+        seats[seat_number - 1].total_ticket_cost = seats[seat_number - 1].num_tickets * seats[seat_number - 1].per_ticket_cost;
+        printf("Seat %d has been reserved for %s to %s on %s with %d ticket(s) at a total cost of %.2f.\n",
+               seat_number, seats[seat_number - 1].passenger_name,
+               seats[seat_number - 1].destination, seats[seat_number - 1].date_of_travel,
+               seats[seat_number - 1].num_tickets, seats[seat_number - 1].total_ticket_cost);
+    }
+}
+
+// Function to cancel a reservation
+void cancelReservation(Seat seats[], int num_seats) {
+    int seat_number;
+    printf("Enter the seat number you want to cancel: ");
+    scanf("%d", &seat_number);
+
+    if (seat_number < 1 || seat_number > num_seats) {
+        printf("Invalid seat number. Please enter a valid seat number.\n");
+        return;
+    }
+
+    if (!seats[seat_number - 1].is_reserved) {
+        printf("Seat %d is not reserved.\n", seat_number);
+    } else {
+        seats[seat_number - 1].is_reserved = 0;
+        seats[seat_number - 1].passenger_name[0] = '\0';
+        seats[seat_number - 1].destination[0] = '\0';
+        seats[seat_number - 1].num_tickets = 0;
+        seats[seat_number - 1].date_of_travel[0] = '\0';
+        seats[seat_number - 1].total_ticket_cost = 0;
+        printf("Reservation for seat %d has been canceled.\n", seat_number);
+    }
+}
+
+int main() {
+    Seat seats[NUM_SEATS];
+    initializeSeats(seats, NUM_SEATS);
+
+    int choice;
+
+    do {
+        printf("\nBus Reservation System Menu:\n");
+        printf("1. Display Available Seats\n");
+        printf("2. Reserve a Seat\n");
+        printf("3. Cancel Reservation\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                displaySeats(seats, NUM_SEATS);
+                break;
+            case 2:
+                reserveSeat(seats, NUM_SEATS);
+                break;
+            case 3:
+                cancelReservation(seats, NUM_SEATS);
+                break;
+            case 4:
+                printf("Exiting the program. Thank you!\n");
+                break;
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
